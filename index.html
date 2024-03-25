@@ -5,157 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title></title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <style>
-        @font-face {
-            font-family: 'Raleway';
-            src: url('https://facqberlin.github.io/fonts/Raleway-Italic.woff2') format('woff2'),
-                url('https://facqberlin.github.io/fonts/Raleway-Italic.woff') format('woff');
-            font-weight: normal;
-            font-style: italic;
-            font-display: swap;
-        }
-
-        @font-face {
-            font-family: 'Raleway';
-            src: url('https://facqberlin.github.io/fonts/Raleway-Bold.woff2') format('woff2'),
-                url('https://facqberlin.github.io/fonts/Raleway-Bold.woff') format('woff');
-            font-weight: bold;
-            font-style: normal;
-            font-display: swap;
-        }
-        @font-face {
-            font-family: 'Raleway';
-            src: url('https://facqberlin.github.io/fonts/Raleway-BoldItalic.woff2') format('woff2'),
-                url('https://facqberlin.github.io/fonts/Raleway-BoldItalic.woff') format('woff');
-            font-weight: bold;
-            font-style: italic;
-            font-display: swap;
-        }
-        @font-face {
-            font-family: 'Raleway';
-            src: url('https://facqberlin.github.io/fonts/Raleway-Regular.woff2') format('woff2'),
-                url('https://facqberlin.github.io/fonts/Raleway-Regular.woff') format('woff');
-            font-weight: normal;
-            font-style: normal;
-            font-display: swap;
-        }
-        @font-face {
-            font-family: 'Roboto Mono';
-            src: url('https://facqberlin.github.io/fonts/RobotoMono-Bold.woff2') format('woff2'),
-                url('https://facqberlin.github.io/fonts/RobotoMono-Bold.woff') format('woff');
-            font-weight: bold;
-            font-style: normal;
-            font-display: swap;
-        }
-        @font-face {
-            font-family: 'Roboto Mono';
-            src: url('https://facqberlin.github.io/fonts/RobotoMono-Regular.woff2') format('woff2'),
-                url('https://facqberlin.github.io/fonts/RobotoMono-Regular.woff') format('woff');
-            font-weight: normal;
-            font-style: normal;
-            font-display: swap;
-        }
-        @font-face {
-            font-family: 'Roboto Mono';
-            src: url('https://facqberlin.github.io/fonts/RobotoMono-Italic.woff2') format('woff2'),
-                url('https://facqberlin.github.io/fonts/RobotoMono-Italic.woff') format('woff');
-            font-weight: normal;
-            font-style: italic;
-            font-display: swap;
-        }
-        @font-face {
-            font-family: 'Roboto Mono';
-            src: url('https://facqberlin.github.io/fonts/RobotoMono-BoldItalic.woff2') format('woff2'),
-                url('https://facqberlin.github.io/fonts/RobotoMono-BoldItalic.woff') format('woff');
-            font-weight: bold;
-            font-style: italic;
-            font-display: swap;
-        }
-        body {
-            font-family: "Raleway";
-            margin-top: 2vh;
-        }
-        svg {
-            width: 100%;
-            height: 90vh;
-        }
-        path {
-            fill: none; /* Make territories invisible initially */
-            stroke: white;
-            stroke-width: 0.5;
-            cursor: pointer; /* Change cursor to pointer for better UX */
-        }
-        path.guess {
-            fill:white;
-            opacity: 0.01;
-            stroke-width: 0;
-        }
-        path.background {
-            fill: white;
-            stroke: grey;
-            stroke-width: 0.5;
-        }
-        path.correct {
-            fill: green;
-            opacity: 0.5;
-        }
-        path.incorrect {
-            fill: yellow;
-            opacity: 1;
-            stroke-width: 10;
-            stroke: rgba(255, 255, 0, 0.3);
-            stroke-linejoin: round; /* Round the corners */
-        }
-        .tooltip {
-            position: absolute;
-            padding: 10px;
-            background-color: white;
-            border: 1px solid black;
-            pointer-events: none;
-            display: none;
-            max-width: 300px;
-        }
-        h1 {
-            margin-top: 0px;
-            margin-bottom: 0px;
-        }
-        h1.de {
-            font-weight: normal;
-        }
-        p {
-            max-width: 1000px;
-        }
-        select {
-            font-family: "Raleway";
-        }
-        #instruction{
-            max-width: 1000px
-        }
-        #countryName {
-            font-size: 1.3em;
-            text-align: center;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 <body>
-    <h1 class = "en">Do you know which places Germany colonized?</h1>
-    <h1 class = "de">Weißt du, welche Orte Deutschland kolonisiert hat?</h1>
-    <p></p>
-    <p>Chose projection: 
-        <span class="info-icon">&#9432;</span>
-        <select id="projectionSelect">
-            <option value="geoMercator">Mercator</option>
-            <option value="geoOrthographic">Orthographic</option>
-            <option value="geoAlbers">Albers</option>
-            <option value="geoEquirectangular">Equirectangular</option>
-            <option value="geoConicEquidistant">Conic Equidistant</option>
-            <!-- Add more projection options as needed -->
-        </select>
-    </p>
-   <div id="instruction">
-    <p id="countryName"></p>
-   </div> 
-    <svg id="map"></svg>
+        <div class="container">
+            <h1 class = "en">Do you know which places Germany colonized?</h1>
+            <h1 class = "de">Weißt du, welche Orte Deutschland kolonisiert hat?</h1>
+            <div id="category">How to play</div>
+            <p class="text_big">You can zoom on the map. More details/description to be added</p>
+            <hr>
+            <p class = "projection">Change projection: 
+                <span class="info-icon">&#9432;</span>
+                <select id="projectionSelect">
+                    <option value="geoMercator">Mercator</option>
+                    <option value="geoOrthographic">Orthographic</option>
+                    <option value="geoAlbers">Albers</option>
+                    <option value="geoEquirectangular">Equirectangular</option>
+                    <option value="geoConicEquidistant">Conic Equidistant</option>
+                    <!-- Add more projection options as needed -->
+                </select>
+            </p>
+            <div id="instruction">
+                <p id="countryName"></p>
+            </div> 
+            <svg id="map"></svg>
+        </div>
     <div class="tooltip" id="tooltip"></div>
 
     <script>
@@ -171,13 +45,13 @@
 
         d3.select(".info-icon")
                 .on("mouseover", function (event) {
-                    tooltip.style("display", "block")
+                    tooltip.style("opacity", 1)
                            .style("left", (event.pageX + 10) + "px")
                            .style("top", (event.pageY + 10) + "px")
                            .html("The default map shows the world in the way it is usually represented in order to make it easier to identify countries / territories. However, this representation of the world is a product of an eurocentric worldview and we encourage you to have a look at other ways the world can be represented!");
             })
                 .on("mouseout", function(){
-                    tooltip.style("display", "none");
+                    tooltip.style("opacity", 0);
                 })
 
         // Disable default behavior of mouse wheel for zooming
@@ -188,7 +62,7 @@
         }, { passive: false });
 
         // Define initial scale based on the size of the SVG container
-        var initialScale = Math.min(window.innerWidth, window.innerHeight) / 8;
+        var initialScale = Math.min(window.innerWidth, window.innerHeight) / 6;
 
         // Define initial projection
         var projectionType = projectionSelect.value;
@@ -224,6 +98,8 @@
         d3.json("https://raw.githubusercontent.com/idaflik/temp/main/current_borders.geojson").then(function(data) {
             backgroundPath = d3.geoPath().projection(initialProjection);
 
+            var thinStroke = 0.5;
+
             svg.selectAll("path.background")
                 .data(data.features)
                 .enter().append("path")
@@ -231,7 +107,7 @@
                 .attr("d", backgroundPath) // Use backgroundPath for rendering
                 .attr("fill", "steelblue")
                 .attr("stroke", "white")
-                .attr("stroke-width", 0.5);
+                .attr("stroke-width", thinStroke);
 
             // Initialize with initial projection
             updateBackgroundProjection(projectionSelect.value);
@@ -248,21 +124,23 @@
             guessPath = d3.geoPath().projection(initialProjection); // Use the same projection as the background
 
             var countries = data.features;
+            console.log(countries.length);
             var selectedCountryIndex = -1;
 
-            var correctCountryIndices = []; // Array to store indices of correctly guessed countries
+            var usedCountryIndices = []; // Array to store indices of correctly guessed countries
+            var correctCount = 0;
 
             function selectRandomCountry() {
                 // Filter out indices of countries that have not been classed as "correct"
                 var availableIndices = countries.map(function(d, i) {
                     return i;
                 }).filter(function(i) {
-                    return !correctCountryIndices.includes(i);
+                    return !usedCountryIndices.includes(i);
                 });
 
                 // Check if there are no more available countries to guess
                 if (availableIndices.length === 0) {
-                    document.getElementById("countryName").innerHTML = "<strong>Done!</strong> Reload the page to try again.";
+                    document.getElementById("countryName").innerHTML = "Done! All of these places were under German rule at some point. <br>You got <strong>" + correctCount + " out of " + countries.length + "</strong> right this time! <br>Hover over the areas to see more information or reload the page to try again.";
                 } else {
                     // Select a random index from the filtered array
                     selectedCountryIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
@@ -276,7 +154,14 @@
                 return d3.geoContains(country, point);
             }
 
-            function handleClick(event) {
+            var zoomLevel = 1;
+            var thickStroke = 20;
+
+            function handleClick(event, d) {
+                usedCountryIndices.push(selectedCountryIndex);
+
+                tooltip.style("opacity", 0);
+
                 var clickPoint = [event.offsetX, event.offsetY];
 
                 // Get the current transformation of the SVG element
@@ -288,29 +173,44 @@
 
                 var clickedInside = isPointInCountry(guessPath.projection().invert([adjustedX,adjustedY]), countries[selectedCountryIndex].geometry);
                 
-                if (clickedInside) {
-                    correctCountryIndices.push(selectedCountryIndex);
-                    d3.select(this).classed("correct", true);
-                    selectRandomCountry(); // Select next random country after guessing correctly
-                } else {
-                    svg.selectAll("path.guess")
-                        .filter(function(d, i) { return i === selectedCountryIndex; })
-                        .classed("incorrect", true)
-                        .style("stroke-width", 10 + "px");
+                if (d3.select(this).classed("correct")|| d3.select(this).classed("incorrect")) {
+                    d3.select(this).style("opacity", 0.5); // Adjust opacity value as desired
+                    
+                    tooltip.style("opacity", 1)
+                           .style("left", (event.pageX + 10) + "px")
+                           .style("top", (event.pageY + 10) + "px")
+                           .html(d.properties.name + "<br>"+
+                           "Under German rule from " + d.properties.start + " - " + d.properties.end);
+
                     setTimeout(function() {
-                        svg.selectAll("path.guess.incorrect")
-                        .classed("incorrect", false)
-                        .style("stroke-width", null);
-                    }, 1000);
-                    selectRandomCountry(); // Select next random country after guessing incorrectly
-                }
+                        tooltip.transition()
+                            .duration(600)
+                            .style("opacity", 0);
+                    }, 2000);
+                }else{
+                    if (clickedInside) {
+                    correctCount = correctCount + 1;
+                    d3.select(this)
+                        .classed("correct", true)
+                        .style("opacity", 0.5)
+                        .style("stroke-width", thickStroke / zoomLevel);
+                    selectRandomCountry(); // Select next random country after guessing correctly
+                    } else {
+                        svg.selectAll("path.guess")
+                            .filter(function(d, i) { return i === selectedCountryIndex; })
+                            .classed("incorrect", true)
+                            .style("stroke-width", thickStroke / zoomLevel);
+                        selectRandomCountry(); // Select next random country after guessing incorrectly
+                    }
+
+                }                
             }
 
             function handleMouseOver(event, d) {
-                if (d3.select(this).classed("correct")) {
-                    d3.select(this).style("opacity", 0.3); // Adjust opacity value as desired
+                if (d3.select(this).classed("correct")|| d3.select(this).classed("incorrect")) {
+                    d3.select(this).style("opacity", 0.5); // Adjust opacity value as desired
         
-                    tooltip.style("display", "block")
+                    tooltip.style("opacity", 1)
                            .style("left", (event.pageX + 10) + "px")
                            .style("top", (event.pageY + 10) + "px")
                            .html(d.properties.name + "<br>"+
@@ -319,8 +219,12 @@
             }
 
             function handleMouseOut() {
-                d3.select(this).style("opacity", 0.5); // Adjust opacity value as needed
-                tooltip.style("display", "none");
+                if (d3.select(this).classed("correct") || d3.select(this).classed("incorrect")) {
+                    d3.select(this).style("opacity", 0.7); // Adjust opacity value as needed
+                } else {
+                    d3.select(this).style("opacity", 0);
+                }
+                tooltip.style("opacity", 0);
             }
 
             svg.selectAll("path.guess")
@@ -350,16 +254,25 @@
             svg.call(zoom);
 
             function zoomed(event) {
+                // update zoomLevel var
+                zoomLevel = event.transform.k;
+
                 // Adjust stroke width based on zoom level
-                var strokeWidth = 0.5 / (event.transform.k); // 0.5 is the initial stroke width
+                var strokeWidth = thinStroke / zoomLevel; // 0.5 is the initial stroke width
+                var guessStrokeWidth = thickStroke / zoomLevel; // 0.5 is the initial stroke width
 
                 svg.selectAll("path.background")
                     .attr("transform", event.transform)
-                    .style("stroke-width", strokeWidth + "px");
+                    .style("stroke-width", strokeWidth);
 
                 svg.selectAll("path.guess")
-                    .attr("transform", event.transform) // Zoom all guess paths
-                    .style("stroke-width", strokeWidth + "px"); // Adjust stroke width
+                    .attr("transform", event.transform); // Zoom all guess paths
+
+                svg.selectAll("path.correct")
+                    .style("stroke-width", guessStrokeWidth); // Adjust stroke width
+                
+                svg.selectAll("path.incorrect")
+                    .style("stroke-width", guessStrokeWidth); // Adjust stroke width
             ;
             }
         });
