@@ -4,9 +4,8 @@ needs(tidyverse,
       ggplot2,
       rnaturalearth,
       osmdata,
-      geojsonrewind,
-      jsonlite,
-      lawn)
+      # geojsonrewind,
+      jsonlite)
 
 ## to do: use this tool to rewind everything: https://observablehq.com/@bumbeishvili/rewind-geojson
 
@@ -18,7 +17,8 @@ needs(tidyverse,
 data <- read_csv("input/colonies_details.csv")
 
 countries <- ne_countries(returnclass = "sf", scale = "medium") %>%
-  dplyr::select(name_long)
+  dplyr::select(name_long)%>%
+  filter(name_long!="Antarctica")
 
 fn <- "current_borders.geojson"
 if(file.exists(fn)){
