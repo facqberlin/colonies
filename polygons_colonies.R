@@ -17,8 +17,8 @@ needs(tidyverse,
 data <- read_csv("input/colonies_details.csv")
 
 countries <- ne_countries(returnclass = "sf", scale = "medium") %>%
-  dplyr::select(name_long)%>%
-  filter(name_long!="Antarctica")
+  dplyr::select(name_long)#%>%
+  # filter(name_long!="Antarctica")
 
 fn <- "current_borders.geojson"
 if(file.exists(fn)){

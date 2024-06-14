@@ -43,7 +43,7 @@
 
         // 1000 because layout width is max-width 1000; adjust accordingly
         var shiftRight = Math.min(window.innerWidth, 1000) * 0.5;
-        var shiftDown = window.innerHeight * 0.3;
+        var shiftDown = window.innerHeight * 0.5;
 
         d3.select(".info-icon")
                 .on("mouseover", function (event) {
@@ -100,7 +100,7 @@
         }
 
         // Load GeoJSON data for background countries and render
-        d3.json("https://raw.githubusercontent.com/idaflik/temp/main/current_borders.geojson").then(function(data) {
+        d3.json("https://raw.githubusercontent.com/facqberlin/temp/main/current_borders.geojson").then(function(data) {
             backgroundPath = d3.geoPath().projection(initialProjection);
 
             var thinStroke = 0.5;
@@ -124,7 +124,7 @@
             });
 
             // Load GeoJSON data for territories and render
-        d3.json("https://raw.githubusercontent.com/idaflik/temp/main/test_colonies.geojson").then(function(data) {
+        d3.json("https://raw.githubusercontent.com/facqberlin/temp/main/test_colonies.geojson").then(function(data) {
             
             guessPath = d3.geoPath().projection(initialProjection); // Use the same projection as the background
 
