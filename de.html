@@ -9,7 +9,7 @@
 </head>
 <body>
         <div class="container">
-            <p id = "lang"><a href="https://facqberlin.github.io/temp/en.html">EN</a> | <a href = "https://facqberlin.github.io/temp/de.html">DE</a></p>
+            <p id = "lang"><a href="https://facqberlin.github.io/colonies/en.html">EN</a> | <a href = "https://facqberlin.github.io/colonies/de.html">DE</a></p>
             <h1 class = "en">Weißt du, welche Orte Deutschland kolonisiert hat?</h1>
             <!-- <div id="category">How to play</div> -->
             <p>Während die deutsche Geschichtsschreibung die Bedeutung und Auswirkungen des deutschen Kolonialismus herunterspielt, reichen die ersten deutschen Kolonisierungsprojekte bereits ins 17. Jahrhundert zurück. Doch erst nach der Gründung des Deutschen Kaiserreichs 1871 und der Berliner Konferenz 1884-1885 entstand ein einheitliches Kolonialreich, das sein brutalstes Gesicht während des Völkermords an den Herero und Nama zeigte. Mehr als 80 % der Herero-Bevölkerung und 50 % der Nama-Bevölkerung Namibias wurden zwischen 1904 und 1908 umgebracht.</p>
@@ -146,7 +146,7 @@
         }
 
         // Load GeoJSON data for background countries and render
-        d3.json("https://raw.githubusercontent.com/facqberlin/temp/main/current_borders.geojson").then(function(data) {
+        d3.json("https://raw.githubusercontent.com/facqberlin/colonies/main/current_borders.geojson").then(function(data) {
             backgroundPath = d3.geoPath().projection(initialProjection);
 
             var thinStroke = 0.5;
@@ -170,7 +170,7 @@
             });
 
             // Load GeoJSON data for territories and render
-        d3.json("https://raw.githubusercontent.com/facqberlin/temp/main/test_colonies.geojson").then(function(data) {
+        d3.json("https://raw.githubusercontent.com/facqberlin/colonies/main/test_colonies.geojson").then(function(data) {
             
             guessPath = d3.geoPath().projection(initialProjection); // Use the same projection as the background
 

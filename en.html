@@ -9,7 +9,7 @@
 </head>
 <body>
         <div class="container">
-            <p id = "lang"><a href="https://facqberlin.github.io/temp/en.html">EN</a> | <a href = "https://facqberlin.github.io/temp/de.html">DE</a></p>
+            <p id = "lang"><a href="https://facqberlin.github.io/colonies/en.html">EN</a> | <a href = "https://facqberlin.github.io/colonies/de.html">DE</a></p>
             <h1 class = "en">Do you know which places Germany colonized?</h1>
             <!-- <div id="category">How to play</div> -->
             <p>Although German historiography minimizes the importance and the impact of German colonialism, the reality is that the first German colonization projects trace back as early as the 17th century. However, it wasn’t after the creation of the German Empire (Deutsches Kaiserreich) in 1871 and the Berlin Conference of 1884-1885 that a unified colonial empire was developed, whose most brutal face was shown during the Herero and Nama genocide. More than 80% of the Herero population and 50% of the Nama population of Namibia were killed between 1904 and 1908.</p>
@@ -146,7 +146,7 @@
         }
 
         // Load GeoJSON data for background countries and render
-        d3.json("https://raw.githubusercontent.com/facqberlin/temp/main/current_borders.geojson").then(function(data) {
+        d3.json("https://raw.githubusercontent.com/facqberlin/colonies/main/current_borders.geojson").then(function(data) {
             backgroundPath = d3.geoPath().projection(initialProjection);
 
             var thinStroke = 0.5;
@@ -170,7 +170,7 @@
             });
 
             // Load GeoJSON data for territories and render
-        d3.json("https://raw.githubusercontent.com/facqberlin/temp/main/test_colonies.geojson").then(function(data) {
+        d3.json("https://raw.githubusercontent.com/facqberlin/colonies/main/test_colonies.geojson").then(function(data) {
             
             guessPath = d3.geoPath().projection(initialProjection); // Use the same projection as the background
 
