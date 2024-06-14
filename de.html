@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+<body>
+        <div class="container">
+            <p id = "lang"><a href="https://facqberlin.github.io/temp/en.html">EN</a> | <a href = "https://facqberlin.github.io/temp/de.html">DE</a></p>
+            <h1 class = "en">Weißt du, welche Orte Deutschland kolonisiert hat?</h1>
+            <!-- <div id="category">How to play</div> -->
+            <p>Während die deutsche Geschichtsschreibung die Bedeutung und Auswirkungen des deutschen Kolonialismus herunterspielt, reichen die ersten deutschen Kolonisierungsprojekte bereits ins 17. Jahrhundert zurück. Doch erst nach der Gründung des Deutschen Kaiserreichs 1871 und der Berliner Konferenz 1884-1885 entstand ein einheitliches Kolonialreich, das sein brutalstes Gesicht während des Völkermords an den Herero und Nama zeigte. Mehr als 80 % der Herero-Bevölkerung und 50 % der Nama-Bevölkerung Namibias wurden zwischen 1904 und 1908 umgebracht.</p>
+
+            <p>Auf dieser Karte seht ihr alle Gebiete, die im Laufe der Geschichte von Deutschland / deutschen Staaten kolonisiert wurden. Kannst du alle ehemaligen Kolonien in Afrika, Asien, Abya Yala und Ozeanien verorten? Du kannst Ort auf der Karte durch anklicken auswählen. Die Karte lässt sich zoomen - einige der ehemaligen Kolonien sind Inselgruppen im Pazifischen Ozean. Bei richtigen Antworten wird das Gebiet grün, wenn sie falsch ist, erscheint es an der richtigen Stelle in rot. Wenn du den Mauszeiger über eines der gezeigten Gebiete bewegst, wird der vollständige Name und die genauen Daten der Kolonialherrschaft angezeigt.</p>
+            <hr>
+            <p class = "projection">Wähle die Kartenprojektion: 
+                <span class="info-icon">&#9432;</span>
+                <select id="projectionSelect">
+                    <option value="geoMercator">Mercator</option>
+                    <option value="geoEquirectangularRotated">Upside-down map</option>
+                    <option value="geoOrthographic">Orthographic 1</option>
+                    <option value="geoOrthographicCustom">Orthographic 2</option>
+                    <option value="geoAlbers">Albers</option>
+                    <option value="geoEquirectangular">Equirectangular</option>
+                    <option value="geoConicEquidistant">Conic Equidistant</option>
+                    <option value="geoAzimuthalEqualArea">Azimuthal Equal Area</option>
+                    <option value="geoStereographic">Stereographic</option>
+                    <option value="geoConicConformal">Conic Conformal</option>
+                    <option value="geoTransverseMercator">Transverse Mercator</option>
+                    
+                    <!-- Add more projection options as needed -->
+                </select>
+            </p>
+            <div id="instruction">
+                <p id="countryName"></p>
+            </div> 
+            <svg id="map"></svg>
+        </div>
+    <div class="tooltip" id="tooltip"></div>
+
+    <script>
+        var projectionSelect = document.getElementById('projectionSelect');
+        var svg = d3.select("#map");
+        var backgroundPath = null; // Separate path generator for background countries
+        var guessPath = null; // Separate path generator for countries to be guessed
+        var tooltip = d3.select("#tooltip");
+
+        // 1000 because layout width is max-width 1000; adjust accordingly
+        var shiftRight = Math.min(window.innerWidth, 1000) * 0.5;
+        var shiftDown = window.innerHeight * 0.5;
+
+        d3.select(".info-icon")
+                .on("mouseover", function (event) {
+                    // Check if the mouse is in the right half of the screen
+                    const isMouseOnRightHalf = event.pageX > window.innerWidth / 2;
+
+                    tooltip.style("opacity", 1)
+                            .style("left", (isMouseOnRightHalf ? event.pageX - 320 : event.pageX + 10) + "px")
+                           .style("top", (event.pageY + 30) + "px")
+                           .html("Die Standardkarte zeigt die Welt so, wie sie normalerweise dargestellt wird, um die Identifizierung von Ländern/Gebieten zu erleichtern. Diese Darstellung der Welt ist jedoch auch Produkt einer eurozentrischen Weltsicht, und wir wollen dich einladen, dir auch andere Darstellungen der Welt anzusehen!");
+            })
+                .on("mouseout", function(){
+                    tooltip.style("opacity", 0);
+                })
+
+        // Disable default behavior of mouse wheel for zooming
+        window.addEventListener("wheel", function(e) {
+            if (e.ctrlKey) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        // Define initial scale based on the size of the SVG container
+        var initialScale = Math.min(window.innerWidth, window.innerHeight) / 6;
+
+        // Define initial projection
+        var projectionType = projectionSelect.value;
+        var initialProjection = d3[projectionType]().translate([shiftRight, shiftDown]).scale(initialScale);
+
+        // Define path generator for background countries
+        function updateBackgroundProjection(projectionType) {
+
+            var projection;
+
+            if (projectionType === 'geoOrthographicCustom') {
+                projection = d3.geoOrthographic()
+                    .rotate([60, 0])
+                    .translate([shiftRight, shiftDown])
+                    .scale(initialScale);
+            } else if (projectionType === 'geoOrthographic') {
+                projection = d3.geoOrthographic()
+                    .rotate([-80, 0])
+                    .translate([shiftRight, shiftDown])
+                    .scale(initialScale);
+            } else if (projectionType === 'geoEquirectangularRotated') {
+                projection = d3.geoEquirectangular()
+                    .rotate([180, 180]) // Rotate 180 degrees around the x-axis
+                    .translate([shiftRight, shiftDown])
+                    .scale(initialScale);
+            } else {
+                projection = d3[projectionType]()
+                    .translate([shiftRight, shiftDown])
+                    .scale(initialScale);
+            }
+
+            backgroundPath.projection(projection);
+
+            // Update map display for background countries
+            svg.selectAll("path.background")
+                .attr("d", backgroundPath);
+        }
+
+        // Define path generator for countries to be guessed
+        function updateGuessProjection(projectionType) {
+            var projection;
+
+            if (projectionType === 'geoOrthographicCustom') {
+                projection = d3.geoOrthographic()
+                    .rotate([60, 0])
+                    .translate([shiftRight, shiftDown])
+                    .scale(initialScale);
+            } else if (projectionType === 'geoOrthographic') {
+                projection = d3.geoOrthographic()
+                    .rotate([-80, 0])
+                    .translate([shiftRight, shiftDown])
+                    .scale(initialScale);
+            } else if (projectionType === 'geoEquirectangularRotated') {
+                projection = d3.geoEquirectangular()
+                    .rotate([180, 180]) // Rotate 180 degrees around the x-axis
+                    .translate([shiftRight, shiftDown])
+                    .scale(initialScale);
+            } else {
+                projection = d3[projectionType]()
+                    .translate([shiftRight, shiftDown])
+                    .scale(initialScale);
+            }
+
+            guessPath.projection(projection);
+
+            // Update map display for countries to be guessed
+            svg.selectAll("path.guess")
+                .attr("d", guessPath);
+        }
+
+        // Load GeoJSON data for background countries and render
+        d3.json("https://raw.githubusercontent.com/facqberlin/temp/main/current_borders.geojson").then(function(data) {
+            backgroundPath = d3.geoPath().projection(initialProjection);
+
+            var thinStroke = 0.5;
+
+            svg.selectAll("path.background")
+                .data(data.features)
+                .enter().append("path")
+                .attr("class", "background")
+                .attr("d", backgroundPath) // Use backgroundPath for rendering
+                .attr("fill", "steelblue")
+                .attr("stroke", "white")
+                .attr("stroke-width", thinStroke);
+
+            // Initialize with initial projection
+            updateBackgroundProjection(projectionSelect.value);
+
+            // Update background projection on select change
+            d3.select("#projectionSelect").on("change", function() {
+                updateBackgroundProjection(this.value);
+                updateGuessProjection(this.value); // Update projection for territories as well
+            });
+
+            // Load GeoJSON data for territories and render
+        d3.json("https://raw.githubusercontent.com/facqberlin/temp/main/test_colonies.geojson").then(function(data) {
+            
+            guessPath = d3.geoPath().projection(initialProjection); // Use the same projection as the background
+
+            var countries = data.features;
+            console.log(countries.length);
+            var selectedCountryIndex = -1;
+
+            var usedCountryIndices = []; // Array to store indices of correctly guessed countries
+            var correctCount = 0;
+
+            function selectRandomCountry() {
+                // Filter out indices of countries that have not been classed as "correct"
+                var availableIndices = countries.map(function(d, i) {
+                    return i;
+                }).filter(function(i) {
+                    return !usedCountryIndices.includes(i);
+                });
+
+                // Check if there are no more available countries to guess
+                if (availableIndices.length === 0) {
+                    d3.selectAll("#countryName").style("font-size", "1em")
+                    document.getElementById("countryName").innerHTML = "Fertig! Alle diese Orte waren mal von Deutschen kolonisiert. <br>Du hast <strong>" + correctCount + " von " + countries.length + "</strong> richtig verortet! <br>Fahre mit der Maus über die Gebiete für mehr Infos oder <a href ='./index.html'>lade die Seite neu</a> um es nochmal zu probieren.";
+                } else {
+                    // Select a random index from the filtered array
+                    selectedCountryIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
+                    document.getElementById("countryName").innerHTML = "Wo war/ist <strong>" + countries[selectedCountryIndex].properties.name + "</strong>?";
+                }
+            }
+
+            selectRandomCountry(); // Initial selection of a random country
+
+            function isPointInCountry(point, country) {
+                return d3.geoContains(country, point);
+            }
+
+            var zoomLevel = 1;
+            var thickStroke = 20;
+
+            function handleClick(event, d) {
+                usedCountryIndices.push(selectedCountryIndex);
+
+                tooltip.style("opacity", 0);
+
+                var clickPoint = [event.offsetX, event.offsetY];
+
+                // Get the current transformation of the SVG element
+                var transform = d3.zoomTransform(svg.node());
+
+                // Adjust the click coordinates based on the current zoom level and translation
+                var adjustedX = (clickPoint[0] - transform.x) / transform.k;
+                var adjustedY = (clickPoint[1] - transform.y) / transform.k;
+
+                var clickedInside = isPointInCountry(guessPath.projection().invert([adjustedX,adjustedY]), countries[selectedCountryIndex].geometry);
+                
+                if (d3.select(this).classed("correct")|| d3.select(this).classed("incorrect")) {
+                    d3.select(this).style("opacity", 0.5); // Adjust opacity value as desired
+
+                    // Check if the mouse is in the right half of the screen
+                    const isMouseOnRightHalf = event.pageX > window.innerWidth / 2;
+                    
+                    tooltip.style("opacity", 1)
+                           .style("left", (isMouseOnRightHalf ? event.pageX - 320 : event.pageX + 10) + "px")
+                           .style("top", (event.pageY + 10) + "px")
+                           .html(d.properties.name + "<br>"+
+                            d.properties.start + " - " + d.properties.end + " unter deutscher Herrschaft");
+
+                    setTimeout(function() {
+                        tooltip.transition()
+                            .duration(600)
+                            .style("opacity", 0);
+                    }, 2000);
+                }else{
+                    if (clickedInside) {
+                    correctCount = correctCount + 1;
+                    d3.select(this)
+                        .classed("correct", true)
+                        .style("opacity", 0.5)
+                        .style("stroke-width", thickStroke / zoomLevel);
+                    selectRandomCountry(); // Select next random country after guessing correctly
+                    } else {
+                        svg.selectAll("path.guess")
+                            .filter(function(d, i) { return i === selectedCountryIndex; })
+                            .classed("incorrect", true)
+                            .style("stroke-width", thickStroke / zoomLevel);
+                        selectRandomCountry(); // Select next random country after guessing incorrectly
+                    }
+
+                }                
+            }
+
+            function handleMouseOver(event, d) {
+                if (d3.select(this).classed("correct")|| d3.select(this).classed("incorrect")) {
+                    d3.select(this).style("opacity", 0.5); // Adjust opacity value as desired
+        
+                    // Check if the mouse is in the right half of the screen
+                    const isMouseOnRightHalf = event.pageX > window.innerWidth / 2;
+                    
+                    tooltip.style("opacity", 1)
+                           .style("left", (isMouseOnRightHalf ? event.pageX - 320 : event.pageX + 10) + "px")
+                           .style("top", (event.pageY + 10) + "px")
+                           .html(d.properties.name + "<br>"+
+                           d.properties.start + " - " + d.properties.end + " unter deutscher Herrschaft");
+                }
+            }
+
+            function handleMouseOut() {
+                if (d3.select(this).classed("correct") || d3.select(this).classed("incorrect")) {
+                    d3.select(this).style("opacity", 0.7); // Adjust opacity value as needed
+                } else {
+                    d3.select(this).style("opacity", 0);
+                }
+                tooltip.style("opacity", 0);
+            }
+
+            svg.selectAll("path.guess")
+                .data(countries)
+                .enter().append("path")
+                .attr("class", "guess")
+                .attr("d", guessPath) // Use guessPath for rendering
+                .on("click", handleClick)
+                .on("mouseover", handleMouseOver)
+                .on("mouseout", handleMouseOut);
+
+            svg.selectAll("path.background")
+                .on("click", handleClick);
+
+            // Update guess projection on select change
+            d3.select("#projectionSelect").on("change", function() {
+                updateGuessProjection(this.value);
+                updateBackgroundProjection(this.value); // Update projection for background as well
+            });
+
+            // Define zoom behavior
+            var zoom = d3.zoom()
+                .scaleExtent([1, 100]) // Define zoom scale limits
+                .on("zoom", zoomed);
+
+            // Apply zoom behavior to SVG
+            svg.call(zoom);
+
+            function zoomed(event) {
+                // update zoomLevel var
+                zoomLevel = event.transform.k;
+
+                // Adjust stroke width based on zoom level
+                var strokeWidth = thinStroke / zoomLevel; // 0.5 is the initial stroke width
+                var guessStrokeWidth = thickStroke / zoomLevel; // 0.5 is the initial stroke width
+
+                svg.selectAll("path.background")
+                    .attr("transform", event.transform)
+                    .style("stroke-width", strokeWidth);
+
+                svg.selectAll("path.guess")
+                    .attr("transform", event.transform); // Zoom all guess paths
+
+                svg.selectAll("path.correct")
+                    .style("stroke-width", guessStrokeWidth); // Adjust stroke width
+                
+                svg.selectAll("path.incorrect")
+                    .style("stroke-width", guessStrokeWidth); // Adjust stroke width
+            ;
+            }
+        });
+        });
+
+        
+    </script>
+</body>
+</html>
