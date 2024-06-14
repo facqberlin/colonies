@@ -192,7 +192,7 @@
                 // Check if there are no more available countries to guess
                 if (availableIndices.length === 0) {
                     d3.selectAll("#countryName").style("font-size", "1em")
-                    document.getElementById("countryName").innerHTML = "Fertig! Alle diese Orte waren mal von Deutschen kolonisiert. <br>Du hast <strong>" + correctCount + " von " + countries.length + "</strong> richtig verortet! <br>Fahre mit der Maus über die Gebiete für mehr Infos oder <a href ='./index.html'>lade die Seite neu</a> um es nochmal zu probieren.";
+                    document.getElementById("countryName").innerHTML = "Fertig! Alle diese Orte waren mal von Deutschen kolonisiert. <br>Du hast <strong>" + correctCount + " von " + countries.length + "</strong> richtig verortet! <br>Fahre mit der Maus über die Gebiete für mehr Infos oder <a href ='https://facqberlin.github.io/colonies/de.html'>lade die Seite neu</a> um es nochmal zu probieren.";
                 } else {
                     // Select a random index from the filtered array
                     selectedCountryIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];

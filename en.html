@@ -192,7 +192,7 @@
                 // Check if there are no more available countries to guess
                 if (availableIndices.length === 0) {
                     d3.selectAll("#countryName").style("font-size", "1em")
-                    document.getElementById("countryName").innerHTML = "Done! All of these places were under German rule at some point. <br>You got <strong>" + correctCount + " out of " + countries.length + "</strong> right this time! <br>Hover over the areas to see more information or <a href ='./index.html'>reload</a> the page to try again.";
+                    document.getElementById("countryName").innerHTML = "Done! All of these places were under German rule at some point. <br>You got <strong>" + correctCount + " out of " + countries.length + "</strong> right this time! <br>Hover over the areas to see more information or <a href ='https://facqberlin.github.io/colonies/en.html'>reload</a> the page to try again.";
                 } else {
                     // Select a random index from the filtered array
                     selectedCountryIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
